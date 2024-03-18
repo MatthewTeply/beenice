@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  app:
+    image: beenice
+    build:
+      context: ../
+      dockerfile: ./docker/Dockerfile
+    container_name: beenice
+    ports:
+      - '3000:3000'
+    volumes:
+      - ..:/app
+      - /app/node_modules
