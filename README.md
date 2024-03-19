@@ -29,10 +29,3 @@ This will create all the Supabase containers and/or start them.
 ```bash
 make db-up
 ```
-
-### 4. Create the network
-This will create a docker network connecting the frontend NextJS application to Supabase.
-
-```bash
-make create-network
-```

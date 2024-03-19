@@ -24,6 +24,3 @@ db-up:
 
 db-down:
 	supabase stop --workdir ./src/
-
-network:
-	docker network connect $(PROJECT_NAME)_default supabase_kong_$(CONTAINER_NAME)
