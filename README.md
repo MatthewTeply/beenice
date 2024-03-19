@@ -27,7 +27,7 @@ make up
 This will create all the Supabase containers and/or start them.
 
 ```bash
-supabase start
+make db-up
 ```
 
 ### 4. Create the network

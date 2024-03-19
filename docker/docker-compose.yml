@@ -1,14 +1,13 @@
-version: '3.8'
+version: '3.9'
 
 services:
   app:
-    image: beenice
+    image: beenice_app
     build:
-      context: ../
+      context: ..
       dockerfile: ./docker/Dockerfile
-    container_name: beenice
+    container_name: beenice_app
     ports:
       - '3000:3000'
     volumes:
       - ..:/app
-      - /app/node_modules
