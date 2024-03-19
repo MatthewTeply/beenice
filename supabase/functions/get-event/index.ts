@@ -1,4 +1,5 @@
 import { createClient, SupabaseClient } from 'https://esm.sh/@supabase/supabase-js'
+import { corsHeaders } from '../_shared/cors.ts';
 
 Deno.serve(async (_req) => {
   try {
@@ -8,7 +9,7 @@ Deno.serve(async (_req) => {
       { global: { headers: { Authorization: _req.headers.get('Authorization')! } } }
     )
 
-    const { event_id } = await _req.json();
+    const event_id = (new URL(_req.url)).searchParams.get('event_id');
 
     const { data, error } = await supabase
       .from('event')
@@ -20,7 +21,7 @@ Deno.serve(async (_req) => {
     }
 
     return new Response(JSON.stringify({ data }), {
-      headers: { 'Content-Type': 'application/json' },
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 200,
     })
   } catch (err) {

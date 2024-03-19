@@ -9,17 +9,30 @@ The whole application is dockerised, therefore you only need to run a few comman
 ### Requirements:
 - [Docker](https://www.docker.com/)
 - [Supabase](https://supabase.com/)
+- [Deno](https://deno.com/) (**optional** - for developing Supabase edge functions)
 
-### Build the project:
+### 1. Build the project:
+This will build the frontend's Docker images.
 ```bash
 make build
 ```
-### Run the project:
+
+### 2. Run the project:
+This will build the frontend's Docker containers and/or start them.
 ```bash
 make up
 ```
 
-### Run Supabase
+### 3. Run Supabase
+This will create all the Supabase containers and/or start them.
+
 ```bash
 supabase start
+```
+
+### 4. Create the network
+This will create a docker network connecting the frontend NextJS application to Supabase.
+
+```bash
+make create-network
 ```

@@ -20,3 +20,8 @@ sh:
 
 logs:
 	docker logs $(CONTAINER_NAME) -f
+
+create-network:
+	docker network create beeniceNetwork; \
+	docker network connect beeniceNetwork $(CONTAINER_NAME)
+	docker network connect beeniceNetwork supabase_kong_$(CONTAINER_NAME)
