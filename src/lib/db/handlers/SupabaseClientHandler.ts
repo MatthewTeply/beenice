@@ -12,5 +12,5 @@ class SupabaseDatabaseHandler extends SupabaseHandler {
     }
 }
 
-const dbHandler = new SupabaseDatabaseHandler();
-export default dbHandler;
+const clientDbHandler = new SupabaseDatabaseHandler();
+export default clientDbHandler;

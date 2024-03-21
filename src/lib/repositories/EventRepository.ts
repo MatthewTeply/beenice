@@ -1,5 +1,5 @@
 import { SupabaseClient } from '@supabase/supabase-js';
-import dbHandler from '../db/handlers/SupabaseServerHandler';
+import serverDbHandler from '../db/handlers/SupabaseServerHandler';
 import { Tables } from '../db/types/supabase.type';
 import EventDto from '../dto/EventDto';
 import UserDto from '../dto/UserDto';
@@ -7,6 +7,7 @@ import EventTypeEnum from '../enums/EventTypeEnum';
 import IRepository from './IRepository';
 import SupabaseHandler from '../db/handlers/SupabaseHandler';
 import UserRepository from './UserRepository';
+import { RepositoryError, RepositoryErrorName } from './RepositoryError';
 
 const TABLE_EVENT = 'event';
 const COLUMN_ID = 'id';
@@ -25,7 +26,7 @@ export default class EventRepository implements IRepository
 
     async getEvent(id: string): Promise<EventDto>
     {
-        const { data, error } = await dbHandler.getClient()
+        const { data, error } = await serverDbHandler.getClient()
             .from(TABLE_EVENT)
             .select('*')
             .eq(COLUMN_ID, id)
@@ -35,8 +36,11 @@ export default class EventRepository implements IRepository
             throw error;
         }
     
-        if (data === null || data.length === 0) {
-            throw new Error('Could not retreive event with id ' + id);
+        if (data === null) {
+            throw new RepositoryError({
+                name: RepositoryErrorName.NO_RESULTS,
+                message: 'No events with ID ' + id
+            });
         }
     
         const userRepository = new UserRepository(this.dbHandler);
@@ -47,7 +51,7 @@ export default class EventRepository implements IRepository
     
     async getEventsForUser(user: UserDto): Promise<EventDto[]>
     {
-        const { data, error } = await dbHandler.getClient()
+        const { data, error } = await serverDbHandler.getClient()
             .from(TABLE_EVENT)
             .select('*')
             .eq(COLUMN_UID, user.id)
@@ -57,8 +61,11 @@ export default class EventRepository implements IRepository
             throw error;
         }
     
-        if (data === null || data.length === 0) {
-            throw new Error('Could not retreive events for user ' + user.username);
+        if (data.length === 0) {
+            throw new RepositoryError({
+                name: RepositoryErrorName.NO_RESULTS,
+                message: 'No events found for user ID ' + user.id
+            });
         }
     
         const events: EventDto[] = [];

@@ -1,8 +1,9 @@
 import UserDto from '../dto/UserDto';
 import { Tables } from '../db/types/supabase.type';
-import { SupabaseClient, User } from '@supabase/supabase-js';
+import { SupabaseClient } from '@supabase/supabase-js';
 import SupabaseHandler from '../db/handlers/SupabaseHandler';
 import IRepository from './IRepository';
+import { RepositoryError, RepositoryErrorName } from './RepositoryError';
 
 export default class UserRepository implements IRepository
 {
@@ -15,7 +16,7 @@ export default class UserRepository implements IRepository
     async loginUser(
         email: string,
         password: string
-    ): Promise<User>
+    ): Promise<UserDto>
     {
         const { data, error } = await this.client.auth.signInWithPassword({
             email,
@@ -26,7 +27,7 @@ export default class UserRepository implements IRepository
             throw error;
         }
     
-        return data.user;
+        return await this.getUser(data.user.id);
     }
     
     async logoutUser(): Promise<boolean>
@@ -45,12 +46,15 @@ export default class UserRepository implements IRepository
         return await this.client.auth.getSession() !== null;
     }
     
-    async getUserId(): Promise<string>
+    async getCurrentUserId(): Promise<string>
     {
         const userId = (await this.client.auth.getSession()).data.session?.user.id;
     
         if (!userId) {
-            throw new Error('User ID could not be retreived, session is not set');
+            throw new RepositoryError({
+                name: RepositoryErrorName.NO_RESULTS,
+                message: 'User ID could not be retreived, session is not set'
+            });
         }
     
         return userId;
@@ -69,7 +73,10 @@ export default class UserRepository implements IRepository
         }
     
         if (data.length === 0) {
-            throw new Error('User not found');
+            throw new RepositoryError({
+                name: RepositoryErrorName.NO_RESULTS,
+                message: 'No user profile found with ID ' + id
+            });
         }
     
         const createdAt = new Date(Date.parse(data[0].created_at));
@@ -79,5 +86,10 @@ export default class UserRepository implements IRepository
             createdAt,
             username: data[0].username
         }
+    }
+
+    async getCurrentUser(): Promise<UserDto>
+    {
+        return await this.getUser(await this.getCurrentUserId());
     }
 }

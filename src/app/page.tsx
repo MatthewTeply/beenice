@@ -1,17 +1,16 @@
-import LogoutBtn from "../components/user/logoutBtn";
 import UserRepository from '../lib/repositories/UserRepository';
-import dbHandler from "../lib/db/handlers/SupabaseServerHandler";
+import serverDbHandler from "../lib/db/handlers/SupabaseServerHandler";
 
 export default async function HomePage() {
-  const userRepository = new UserRepository(dbHandler);
+  const userRepository = new UserRepository(serverDbHandler);
 
-  const user = await userRepository.getUser(await userRepository.getUserId());
+  const user = await userRepository.getUser(await userRepository.getCurrentUserId());
 
   return (
     <main>
-      Welcome, {user.username}
-
-      {await userRepository.isUserLoggedIn() ? <LogoutBtn /> : false}
+      <h1>
+        Welcome, {user.username}
+      </h1>
     </main>
   );
 }

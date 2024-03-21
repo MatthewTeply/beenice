@@ -1,8 +1,9 @@
-import type { Metadata } from "next";
+import type { Metadata } from 'next';
+import Header from '../components/partials/header';
 
 export const metadata: Metadata = {
-  title: "Beenice",
-  description: "Be(e) nice to others.",
+  title: 'Beenice',
+  description: 'Be(e) nice to others.',
 };
 
 export default function RootLayout({
@@ -12,7 +13,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <Header />
+        {children}
+      </body>
     </html>
   );
 }

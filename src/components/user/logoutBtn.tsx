@@ -2,13 +2,18 @@
 
 import { useRouter } from 'next/navigation';
 import UserRepository from '../../lib/repositories/UserRepository';
-import dbHandler from '../../lib/db/handlers/SupabaseClientHandler';
+import clientDbHandler from '../../lib/db/handlers/SupabaseClientHandler';
+import UserDto from '../../lib/dto/UserDto';
 
-export default function LogoutBtn() {
+type Props= {
+    user: UserDto
+}
+
+export default function LogoutBtn(props: Props) {
     const router = useRouter();
 
     const logout = async () => {
-        const userRepository = new UserRepository(dbHandler);
+        const userRepository = new UserRepository(clientDbHandler);
 
         await userRepository.logoutUser();
 
@@ -16,6 +21,6 @@ export default function LogoutBtn() {
     }
 
     return (
-        <button onClick={logout}>Logout</button>
+        <button onClick={logout}>Logout {props.user.username}</button>
     );
 }

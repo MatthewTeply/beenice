@@ -1,11 +1,12 @@
 import { SupabaseClient } from '@supabase/supabase-js';
-import dbHandler from '../db/handlers/SupabaseServerHandler';
+import serverDbHandler from '../db/handlers/SupabaseServerHandler';
 import { Tables } from '../db/types/supabase.type';
 import BeeDto from '../dto/BeeDto';
 import IRepository from './IRepository';
 import SupabaseHandler from '../db/handlers/SupabaseHandler';
 import EventRepository from './EventRepository';
 import UserRepository from './UserRepository';
+import { RepositoryError, RepositoryErrorName } from './RepositoryError';
 
 export default class BeeRepository implements IRepository
 {
@@ -20,7 +21,7 @@ export default class BeeRepository implements IRepository
 
     async getBee(id: string): Promise<BeeDto>
     {
-        let { data, error } = await dbHandler.getClient()
+        let { data, error } = await serverDbHandler.getClient()
             .from('bee')
             .select('id')
             .eq('id', id)
@@ -30,8 +31,11 @@ export default class BeeRepository implements IRepository
             throw error;
         }
     
-        if (data === null || data.length === 0) {
-            throw new Error('Could not retreive bee with id ' + id);
+        if (data === null) {
+            throw new RepositoryError({
+                name: RepositoryErrorName.NO_RESULTS,
+                message: 'No bee found with ID ' + id
+            });
         }
     
         const createdAt = new Date(Date.parse(data[0].created_at));

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import UserRepository from '../../lib/repositories/UserRepository';
-import dbHandler from '../../lib/db/handlers/SupabaseClientHandler';
+import clientDbHandler from '../../lib/db/handlers/SupabaseClientHandler';
 import { AuthError } from '@supabase/supabase-js';
 
 export default function LoginForm()
@@ -29,12 +29,12 @@ export default function LoginForm()
     }
 
     const login = async () => {
-        const userRepository = new UserRepository(dbHandler);
+        const userRepository = new UserRepository(clientDbHandler);
 
         try {
             const user = await userRepository.loginUser(data.email, data.password);
 
-            setMessage('Welcome, ' + user.email);
+            setMessage('Welcome, ' + user.username);
 
             setTimeout(() => {
                 router.refresh();

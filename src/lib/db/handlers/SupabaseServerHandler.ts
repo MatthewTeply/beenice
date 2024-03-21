@@ -1,5 +1,5 @@
 import { SupabaseClient, SupabaseClientOptions } from '@supabase/supabase-js';
-import { createServerClient } from '@supabase/ssr';
+import { CookieOptions, createServerClient } from '@supabase/ssr';
 import SupabaseSchema from '../schemas/supabase.schema';
 import { cookies } from 'next/headers';
 import SupabaseHandler from './SupabaseHandler';
@@ -15,14 +15,23 @@ class SupabaseDatabaseHandler extends SupabaseHandler {
             {
                 ...options,
                 cookies: {
-                    get(name: string) {
+                    get(name: string): string|undefined
+                    {
                         return cookieStore.get(name)?.value
                     },
+                    set(name: string, value: string): void
+                    {
+                        cookieStore.set(name, value);
+                    },
+                    remove(name: string)
+                    {
+                        cookieStore.delete(name);
+                    }
                 }
             }
         );
     }
 }
 
-const dbHandler = new SupabaseDatabaseHandler();
-export default dbHandler;
+const serverDbHandler = new SupabaseDatabaseHandler();
+export default serverDbHandler;
