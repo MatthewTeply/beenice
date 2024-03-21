@@ -4,8 +4,8 @@ import { corsHeaders } from '../_shared/cors.ts';
 Deno.serve(async (_req) => {
   try {
     const supabase: SupabaseClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+      Deno.env.get('NEXT_PUBLIC_SUPABASE_URL') ?? '',
+      Deno.env.get('NEXT_PUBLIC_SUPABASE_ANON_KEY') ?? '',
       { global: { headers: { Authorization: _req.headers.get('Authorization')! } } }
     )
 

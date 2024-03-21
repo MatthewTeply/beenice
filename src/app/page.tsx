@@ -1,20 +1,17 @@
-'use client'
+import LogoutBtn from "../components/user/logoutBtn";
+import UserRepository from '../lib/repositories/UserRepository';
+import dbHandler from "../lib/db/handlers/SupabaseServerHandler";
 
-import React from 'react';
+export default async function HomePage() {
+  const userRepository = new UserRepository(dbHandler);
 
-export default function Home() {
-
-  React.useEffect(() => {
-    fetch('http://127.0.0.1:54321/functions/v1/get-event/?event_id=2c0a4227-c7ea-40c7-9d26-c2faa5b5a90c', {
-      headers: new Headers({
-        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0'
-      })
-    }).then(response => console.log(response))
-  }, []);
+  const user = await userRepository.getUser(await userRepository.getUserId());
 
   return (
     <main>
-      Hello world.
+      Welcome, {user.username}
+
+      {await userRepository.isUserLoggedIn() ? <LogoutBtn /> : false}
     </main>
   );
 }
