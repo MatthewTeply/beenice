@@ -4,15 +4,14 @@ import serverDbHandler from '../../lib/db/handlers/SupabaseServerHandler';
 import UserDto from '../../lib/dto/UserDto';
 import LogoutBtn from '../user/logoutBtn';
 
-export default async function Header()
-{
-    let user: UserDto|null = null;
+export default async function Header() {
+    let user: UserDto | null = null;
 
     const userRepository = new UserRepository(serverDbHandler);
 
     try {
         user = await userRepository.getCurrentUser();
-    } catch(error) {}
+    } catch (error) {}
 
     const loggedInNav = (user: UserDto) => {
         return (
@@ -21,11 +20,14 @@ export default async function Header()
                     <Link href='/events'>My events</Link>
                 </li>
                 <li>
+                    <Link href='/bees'>My Bees</Link>
+                </li>
+                <li>
                     <LogoutBtn user={user} />
                 </li>
             </>
         );
-    }
+    };
 
     const loggedOutNav = () => {
         return (
@@ -33,18 +35,16 @@ export default async function Header()
                 <Link href='/login'>Login</Link>
             </li>
         );
-    }
-    
+    };
+
     return (
         <header>
             <Link href='/'>
                 <h1>Beenice</h1>
             </Link>
             <nav>
-                <ul>
-                    {user !== null ? loggedInNav(user) : loggedOutNav()}
-                </ul>
+                <ul>{user !== null ? loggedInNav(user) : loggedOutNav()}</ul>
             </nav>
         </header>
-    )
+    );
 }

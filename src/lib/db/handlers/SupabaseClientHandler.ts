@@ -3,12 +3,8 @@ import { createBrowserClient } from '@supabase/ssr';
 import SupabaseHandler from './SupabaseHandler';
 
 class SupabaseDatabaseHandler extends SupabaseHandler {
-    getClient(): SupabaseClient
-    {
-        return createBrowserClient(
-            this.supabaseUrl, 
-            this.supabaseKey,
-        );
+    getClient(): SupabaseClient {
+        return createBrowserClient(this.supabaseUrl, this.supabaseKey);
     }
 }
 

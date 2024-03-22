@@ -1,16 +1,16 @@
-import UserRepository from '../lib/repositories/UserRepository';
-import serverDbHandler from "../lib/db/handlers/SupabaseServerHandler";
+import EventsFeed from '../components/events/EventsFeed';
+import serverDbHandler from '../lib/db/handlers/SupabaseServerHandler';
+import EventRepository from '../lib/repositories/EventRepository';
 
 export default async function HomePage() {
-  const userRepository = new UserRepository(serverDbHandler);
+    const eventRepository = new EventRepository(serverDbHandler);
 
-  const user = await userRepository.getUser(await userRepository.getCurrentUserId());
+    const initialRandomEvent = await eventRepository.getRandomEvent();
 
-  return (
-    <main>
-      <h1>
-        Welcome, {user.username}
-      </h1>
-    </main>
-  );
+    return (
+        <main>
+            <h1>Homepage</h1>
+            <EventsFeed initialRandomEvent={initialRandomEvent} />
+        </main>
+    );
 }

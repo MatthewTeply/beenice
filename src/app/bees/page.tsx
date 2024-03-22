@@ -1,34 +1,34 @@
 import serverDbHandler from '../../lib/db/handlers/SupabaseServerHandler';
-import EventRepository from '../../lib/repositories/EventRepository';
+import BeeRepository from '../../lib/repositories/BeeRepository';
 import RepositoryNoResultsError from '../../lib/repositories/RepositoryNoResultsError';
 import UserRepository from '../../lib/repositories/UserRepository';
 
-export default async function EventsPage() {
+export default async function BeesPage() {
     const userRepository = new UserRepository(serverDbHandler);
-    const eventRepository = new EventRepository(serverDbHandler);
+    const beeRepository = new BeeRepository(serverDbHandler);
 
-    let events = null;
     let message = null;
+    let bees = null;
 
     try {
-        events = await eventRepository.getEventsForUser(
+        bees = await beeRepository.getUserBees(
             await userRepository.getCurrentUser()
         );
     } catch (error) {
         if (error instanceof RepositoryNoResultsError) {
-            message = 'No events found';
+            message = 'No bees found';
         }
     }
 
     return (
         <main>
-            <h1>Events</h1>
+            <h1>Bees</h1>
             <div>{message !== null ? <span>{message}</span> : false}</div>
             <div>
                 <ul>
-                    {events !== null
-                        ? events.map((event, key) => {
-                              return <li key={key}>{event.description}</li>;
+                    {bees !== null
+                        ? bees.map((bee, key) => {
+                              return <li key={key}>{bee.description}</li>;
                           })
                         : false}
                 </ul>

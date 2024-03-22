@@ -40,21 +40,21 @@ export type Database = {
           description: string
           event_id: string
           id: string
-          uid: string
+          user_id: string
         }
         Insert: {
           created_at?: string
           description: string
           event_id: string
           id?: string
-          uid?: string
+          user_id?: string
         }
         Update: {
           created_at?: string
           description?: string
           event_id?: string
           id?: string
-          uid?: string
+          user_id?: string
         }
         Relationships: [
           {
@@ -66,7 +66,7 @@ export type Database = {
           },
           {
             foreignKeyName: "public_bee_uid_fkey"
-            columns: ["uid"]
+            columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
@@ -79,21 +79,21 @@ export type Database = {
           created_at: string
           id: string
           is_useful: boolean
-          uid: string
+          user_id: string
         }
         Insert: {
           bee_id: string
           created_at?: string
           id?: string
           is_useful: boolean
-          uid?: string
+          user_id?: string
         }
         Update: {
           bee_id?: string
           created_at?: string
           id?: string
           is_useful?: boolean
-          uid?: string
+          user_id?: string
         }
         Relationships: [
           {
@@ -105,7 +105,7 @@ export type Database = {
           },
           {
             foreignKeyName: "public_beeRating_uid_fkey"
-            columns: ["uid"]
+            columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
@@ -119,7 +119,7 @@ export type Database = {
           id: string
           is_relevant: boolean
           type: string
-          uid: string
+          user_id: string
         }
         Insert: {
           created_at?: string
@@ -127,7 +127,7 @@ export type Database = {
           id?: string
           is_relevant?: boolean
           type: string
-          uid?: string
+          user_id?: string
         }
         Update: {
           created_at?: string
@@ -135,12 +135,12 @@ export type Database = {
           id?: string
           is_relevant?: boolean
           type?: string
-          uid?: string
+          user_id?: string
         }
         Relationships: [
           {
             foreignKeyName: "public_event_uid_fkey"
-            columns: ["uid"]
+            columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
