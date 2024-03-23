@@ -9,7 +9,9 @@ import RepositoryNoResultsError from './RepositoryNoResultsError';
 import UserDto from '../dto/UserDto';
 import EventDto from '../dto/EventDto';
 
-type BeeJoined = Tables<'bee'> & {
+const TABLE_BEE = 'bee';
+
+type BeeJoined = Tables<typeof TABLE_BEE> & {
     event: Tables<'event'>;
     user?: Tables<'profile'>;
 };
@@ -26,7 +28,7 @@ export default class BeeRepository implements IRepository {
     async getBee(id: string): Promise<BeeDto> {
         let { data, error } = await this.dbHandler
             .getClient()
-            .from('bee')
+            .from(TABLE_BEE)
             .select(
                 `
                 *,
@@ -54,7 +56,7 @@ export default class BeeRepository implements IRepository {
     async getUserBees(user: UserDto): Promise<BeeDto[]> {
         let { data, error } = await this.dbHandler
             .getClient()
-            .from('bee')
+            .from(TABLE_BEE)
             .select(
                 `
                 *,
@@ -88,7 +90,7 @@ export default class BeeRepository implements IRepository {
     }
 
     async setBee(description: string, event: EventDto): Promise<void> {
-        let { error } = await this.client.from('bee').insert({
+        let { error } = await this.client.from(TABLE_BEE).insert({
             description,
             event_id: event.id,
         });
@@ -100,7 +102,7 @@ export default class BeeRepository implements IRepository {
 }
 
 export function beeToDto(
-    bee: Tables<'bee'>,
+    bee: Tables<typeof TABLE_BEE>,
     event: EventDto,
     user: UserDto
 ): BeeDto {

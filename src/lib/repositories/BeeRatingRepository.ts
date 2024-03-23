@@ -8,7 +8,9 @@ import { Tables } from '../db/types/supabase.type';
 import RepositoryNoResultsError from './RepositoryNoResultsError';
 import UserDto from '../dto/UserDto';
 
-type BeeRatingJoined = Tables<'beeRating'> & {
+const TABLE_BEE_RATING = 'beeRating';
+
+type BeeRatingJoined = Tables<typeof TABLE_BEE_RATING> & {
     bee?: Tables<'bee'>;
     user?: Tables<'profile'>;
 };
@@ -27,7 +29,7 @@ export default class BeeRatingRepository implements IRepository {
 
         const userId = userRepository.getCurrentUserId();
 
-        const { error } = await this.client.from('beeRating').insert({
+        const { error } = await this.client.from(TABLE_BEE_RATING).insert({
             is_useful: isUseful,
             bee_id: bee.id,
             user_id: userId,
@@ -40,7 +42,7 @@ export default class BeeRatingRepository implements IRepository {
 
     async getBeeRatingByBee(bee: BeeDto): Promise<BeeRatingDto[]> {
         const { data, error } = await this.client
-            .from('beeRating')
+            .from(TABLE_BEE_RATING)
             .select(
                 `
                 id,
@@ -54,7 +56,7 @@ export default class BeeRatingRepository implements IRepository {
             throw error;
         }
 
-        if (data.length === 0 || data === null) {
+        if (data === null || data.length === 0) {
             throw new RepositoryNoResultsError('No bee ratings found');
         }
 
@@ -73,7 +75,7 @@ export default class BeeRatingRepository implements IRepository {
 }
 
 export function beeRatingToDto(
-    beeRating: Tables<'beeRating'>,
+    beeRating: Tables<typeof TABLE_BEE_RATING>,
     bee: BeeDto,
     user: UserDto
 ): BeeRatingDto {

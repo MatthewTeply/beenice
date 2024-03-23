@@ -13,8 +13,6 @@ const COLUMN_ID = 'id';
 const COLUMN_USER_ID = 'user_id';
 const FUNCTION_GET_RANDOM_EVENT = 'get-random-event';
 
-type EventJoined = Tables<'event'> & { user: Tables<'profile'> };
-
 export default class EventRepository implements IRepository {
     client: SupabaseClient;
     dbHandler: SupabaseHandler;
@@ -30,7 +28,7 @@ export default class EventRepository implements IRepository {
             .from(TABLE_EVENT)
             .select('*')
             .eq(COLUMN_ID, id)
-            .returns<Tables<'event'>[]>();
+            .returns<Tables<typeof TABLE_EVENT>[]>();
 
         if (error) {
             throw error;
@@ -52,7 +50,7 @@ export default class EventRepository implements IRepository {
             .from(TABLE_EVENT)
             .select('*')
             .eq(COLUMN_USER_ID, user.id)
-            .returns<Tables<'event'>[]>();
+            .returns<Tables<typeof TABLE_EVENT>[]>();
 
         if (error) {
             throw error;
@@ -73,9 +71,25 @@ export default class EventRepository implements IRepository {
         return events;
     }
 
+    async setEvent(description: string, type: EventTypeEnum): Promise<void> {
+        const userRepository = new UserRepository(this.dbHandler);
+
+        const user = userRepository.getCurrentUser();
+
+        const { error } = await this.client.from(TABLE_EVENT).insert({
+            description,
+            type,
+            user,
+        });
+
+        if (error) {
+            throw error;
+        }
+    }
+
     async getRandomEvent(): Promise<EventDto> {
         const { data, error } = await this.client.functions.invoke<
-            Tables<'event'>[]
+            Tables<typeof TABLE_EVENT>[]
         >(FUNCTION_GET_RANDOM_EVENT);
 
         if (error) {
@@ -93,7 +107,10 @@ export default class EventRepository implements IRepository {
     }
 }
 
-export function eventToDto(event: Tables<'event'>, user: UserDto): EventDto {
+export function eventToDto(
+    event: Tables<typeof TABLE_EVENT>,
+    user: UserDto
+): EventDto {
     const createdAt = new Date(Date.parse(event.created_at));
 
     return {

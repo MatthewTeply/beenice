@@ -5,7 +5,7 @@ import EventDto from '../../lib/dto/EventDto';
 import EventRepository from '../../lib/repositories/EventRepository';
 import clientDbHandler from '../../lib/db/handlers/SupabaseClientHandler';
 import BeeRepository from '../../lib/repositories/BeeRepository';
-import UserRepository from '../../lib/repositories/UserRepository';
+import RepositoryNoResultsError from '../../lib/repositories/RepositoryNoResultsError';
 
 type Props = {
     initialRandomEvent: EventDto;
@@ -29,7 +29,9 @@ export default function EventsFeed(props: Props) {
                 setRandomEvent(event);
             })
             .catch((error) => {
-                console.error(error);
+                if (error instanceof RepositoryNoResultsError) {
+                    setMessage('No more events!');
+                }
             });
     };
 
