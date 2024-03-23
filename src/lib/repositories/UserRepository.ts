@@ -69,7 +69,7 @@ export default class UserRepository implements IRepository {
             );
         }
 
-        return profileToDto(data[0]);
+        return userToDto(data[0]);
     }
 
     async getCurrentUser(): Promise<UserDto> {
@@ -77,7 +77,7 @@ export default class UserRepository implements IRepository {
     }
 }
 
-export function profileToDto(profile: Tables<'profile'>): UserDto {
+export function userToDto(profile: Tables<'profile'>): UserDto {
     const createdAt = new Date(Date.parse(profile.created_at));
 
     return {

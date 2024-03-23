@@ -4,7 +4,7 @@ import BeeDto from '../dto/BeeDto';
 import IRepository from './IRepository';
 import SupabaseHandler from '../db/handlers/SupabaseHandler';
 import { eventToDto } from './EventRepository';
-import { profileToDto } from './UserRepository';
+import { userToDto } from './UserRepository';
 import RepositoryNoResultsError from './RepositoryNoResultsError';
 import UserDto from '../dto/UserDto';
 import EventDto from '../dto/EventDto';
@@ -45,7 +45,10 @@ export default class BeeRepository implements IRepository {
             throw new RepositoryNoResultsError('No bee found with ID ' + id);
         }
 
-        return beeToDto(data, profileToDto(data.user!));
+        const user = userToDto(data.user!);
+        const event = eventToDto(data.event, user);
+
+        return beeToDto(data, event, user);
     }
 
     async getUserBees(user: UserDto): Promise<BeeDto[]> {
@@ -73,8 +76,12 @@ export default class BeeRepository implements IRepository {
 
         const userBees: BeeDto[] = [];
 
+        let event: EventDto;
+
         data.map((bee) => {
-            userBees.push(beeToDto(bee, user));
+            event = eventToDto(bee.event, user);
+
+            userBees.push(beeToDto(bee, event, user));
         });
 
         return userBees;
@@ -92,14 +99,18 @@ export default class BeeRepository implements IRepository {
     }
 }
 
-export function beeToDto(bee: BeeJoined, user: UserDto): BeeDto {
+export function beeToDto(
+    bee: Tables<'bee'>,
+    event: EventDto,
+    user: UserDto
+): BeeDto {
     const createdAt = new Date(Date.parse(bee.created_at));
 
     return {
         id: bee.id,
         createdAt,
         description: bee.description,
-        event: eventToDto(bee.event, user),
+        event: event,
         user,
     };
 }

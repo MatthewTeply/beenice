@@ -2,11 +2,11 @@ import { SupabaseClient } from '@supabase/supabase-js';
 import { Tables } from '../db/types/supabase.type';
 import EventDto from '../dto/EventDto';
 import UserDto from '../dto/UserDto';
-import EventTypeEnum from '../enums/EventTypeEnum';
 import IRepository from './IRepository';
 import SupabaseHandler from '../db/handlers/SupabaseHandler';
 import UserRepository from './UserRepository';
 import RepositoryNoResultsError from './RepositoryNoResultsError';
+import EventTypeEnum from '../enums/EventTypeEnum';
 
 const TABLE_EVENT = 'event';
 const COLUMN_ID = 'id';
