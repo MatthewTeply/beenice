@@ -1,4 +1,4 @@
-import RandomEvent from '../components/events/RandomEvent';
+import RandomEvent from '../components/events/randomEvent';
 import serverDbHandler from '../lib/db/handlers/SupabaseServerHandler';
 import EventRepository from '../lib/repositories/EventRepository';
 

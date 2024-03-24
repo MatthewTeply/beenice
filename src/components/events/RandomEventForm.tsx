@@ -18,7 +18,7 @@ export default function RandomEventForm(props: Props) {
                 onChange={props.onChange}
                 placeholder={props.randomEvent.type.beePlaceholders[0]}
             ></Textarea>
-            <Button onClick={props.onSubmit}>Send bee!</Button>
+            <Button onClick={props.onSubmit}>Buzz Up!</Button>
         </div>
     );
 }

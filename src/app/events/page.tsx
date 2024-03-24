@@ -1,3 +1,4 @@
+import MyEvents from '../../components/events/myEvents';
 import serverDbHandler from '../../lib/db/handlers/SupabaseServerHandler';
 import EventRepository from '../../lib/repositories/EventRepository';
 import RepositoryNoResultsError from '../../lib/repositories/RepositoryNoResultsError';
@@ -22,16 +23,7 @@ export default async function EventsPage() {
 
     return (
         <main className='flex justify-center mt-20'>
-            <div>{message !== null ? <span>{message}</span> : false}</div>
-            <div>
-                <ul>
-                    {events !== null
-                        ? events.map((event, key) => {
-                              return <li key={key}>{event.description}</li>;
-                          })
-                        : false}
-                </ul>
-            </div>
+            <MyEvents events={events} />
         </main>
     );
 }

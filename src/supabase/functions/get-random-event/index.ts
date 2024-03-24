@@ -25,11 +25,7 @@ Deno.serve(async (_req) => {
 
             const { data, error } = await supabaseClient
                 .from('event')
-                .select(
-                    `
-                    *
-                `
-                )
+                .select('*')
                 .neq('user_id', user.id)
                 .not('id', 'in', `(${userAnsweredEventIds})`)
                 .range(randomOffset, randomOffset);

@@ -3,8 +3,8 @@ import { Tables } from '../db/types/supabase.type';
 import BeeDto from '../dto/BeeDto';
 import IRepository from './IRepository';
 import SupabaseHandler from '../db/handlers/SupabaseHandler';
-import { eventToDto } from './EventRepository';
-import { userToDto } from './UserRepository';
+import EventRepository, { eventToDto } from './EventRepository';
+import UserRepository, { userToDto } from './UserRepository';
 import RepositoryNoResultsError from './RepositoryNoResultsError';
 import UserDto from '../dto/UserDto';
 import EventDto from '../dto/EventDto';
@@ -13,7 +13,7 @@ const TABLE_BEE = 'bee';
 
 type BeeJoined = Tables<typeof TABLE_BEE> & {
     event: Tables<'event'>;
-    user?: Tables<'profile'>;
+    profile?: Tables<'profile'>;
 };
 
 export default class BeeRepository implements IRepository {
@@ -32,8 +32,8 @@ export default class BeeRepository implements IRepository {
             .select(
                 `
                 *,
-                event:event_id (*),
-                profile:user_id (*)
+                profile:user_id (*),
+                event:event_id (*)
             `
             )
             .eq('id', id)
@@ -47,13 +47,21 @@ export default class BeeRepository implements IRepository {
             throw new RepositoryNoResultsError('No bee found with ID ' + id);
         }
 
-        const user = userToDto(data.user!);
+        const user = userToDto(data.profile!);
         const event = eventToDto(data.event, user);
 
         return beeToDto(data, event, user);
     }
 
     async getUserBees(user: UserDto): Promise<BeeDto[]> {
+        const eventRepository = new EventRepository(this.dbHandler);
+        const userRepository = new UserRepository(this.dbHandler);
+
+        const userEvents = await eventRepository.getEventsForUser(user);
+        const userEventIds: string[] = [];
+
+        userEvents.map((userEvent) => userEventIds.push(userEvent.id));
+
         let { data, error } = await this.dbHandler
             .getClient()
             .from(TABLE_BEE)
@@ -63,7 +71,7 @@ export default class BeeRepository implements IRepository {
                 event:event_id (*)
             `
             )
-            .eq('user_id', user.id)
+            .in('event_id', userEventIds)
             .returns<BeeJoined[]>();
 
         if (error) {
@@ -76,17 +84,17 @@ export default class BeeRepository implements IRepository {
             );
         }
 
-        const userBees: BeeDto[] = [];
-
         let event: EventDto;
+        let beeUser: UserDto;
 
-        data.map((bee) => {
+        const userBees = await data.map(async (bee) => {
             event = eventToDto(bee.event, user);
+            beeUser = await userRepository.getUser(bee.user_id);
 
-            userBees.push(beeToDto(bee, event, user));
+            return beeToDto(bee, event, beeUser);
         });
 
-        return userBees;
+        return Promise.all(userBees);
     }
 
     async setBee(description: string, event: EventDto): Promise<void> {

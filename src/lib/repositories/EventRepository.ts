@@ -63,24 +63,30 @@ export default class EventRepository implements IRepository {
             );
         }
 
-        const events: EventDto[] = [];
-
-        data.map((event) => {
-            events.push(eventToDto(event, user));
+        const events: EventDto[] = data.map((event) => {
+            return eventToDto(event, user);
         });
 
         return events;
     }
 
+    async getEventsForCurrentUser(): Promise<EventDto[]> {
+        const userRepository = new UserRepository(this.dbHandler);
+
+        const currentUser = await userRepository.getCurrentUser();
+
+        return await this.getEventsForUser(currentUser);
+    }
+
     async setEvent(description: string, type: EventTypeEnum): Promise<void> {
         const userRepository = new UserRepository(this.dbHandler);
 
-        const user = userRepository.getCurrentUser();
+        const user = await userRepository.getCurrentUser();
 
         const { error } = await this.client.from(TABLE_EVENT).insert({
             description,
             type,
-            user,
+            user_id: user.id,
         });
 
         if (error) {

@@ -1,17 +1,18 @@
 'use client';
 
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 import EventDto from '../../lib/dto/EventDto';
 import EventRepository from '../../lib/repositories/EventRepository';
 import clientDbHandler from '../../lib/db/handlers/SupabaseClientHandler';
 import BeeRepository from '../../lib/repositories/BeeRepository';
 import RepositoryNoResultsError from '../../lib/repositories/RepositoryNoResultsError';
 import SplitView from '../splitView';
-import RandomEventForm from './RandomEventForm';
-import RandomEventDescription from './RandomEventDescription';
+import RandomEventForm from './randomEventForm';
+import RandomEventDescription from './randomEventDescription';
 import Loading from '../loading';
 
 const MSG_NO_MORE_EVENTS = 'No more events!';
+const MSG_LOADING = 'Loading more events...';
 
 type Props = {
     initialRandomEvent: EventDto | null;
@@ -87,7 +88,7 @@ export default function RandomEvent(props: Props) {
     }
 
     if (isLoading) {
-        return <Loading />;
+        return <Loading message={MSG_LOADING} />;
     }
 
     return MSG_NO_MORE_EVENTS;

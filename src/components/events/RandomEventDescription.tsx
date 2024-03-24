@@ -13,7 +13,7 @@ export default function RandomEventDescription(props: Props) {
                     __html: props.randomEvent.type.title,
                 }}
             />
-            <p className='text-center'>{props.randomEvent.description}</p>
+            <p className='text-center mt-4'>{props.randomEvent.description}</p>
         </>
     );
 }
