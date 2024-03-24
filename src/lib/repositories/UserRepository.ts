@@ -1,15 +1,47 @@
 import UserDto from '../dto/UserDto';
 import { Tables } from '../db/types/supabase.type';
-import { SupabaseClient } from '@supabase/supabase-js';
+import { SupabaseClient, User } from '@supabase/supabase-js';
 import SupabaseHandler from '../db/handlers/SupabaseHandler';
 import IRepository from './IRepository';
 import RepositoryNoResultsError from './RepositoryNoResultsError';
+
+const TABLE_PROFILE = 'profile';
 
 export default class UserRepository implements IRepository {
     client: SupabaseClient;
 
     constructor(dbHandler: SupabaseHandler) {
         this.client = dbHandler.getClient();
+    }
+
+    async signupUser(
+        email: string,
+        username: string,
+        password: string
+    ): Promise<void> {
+        const { data, error } = await this.client.auth.signUp({
+            email,
+            password,
+        });
+
+        if (error) {
+            throw error;
+        }
+
+        if (data.user !== null) {
+            await this.setUser(data.user, username);
+        }
+    }
+
+    private async setUser(user: User, username: string): Promise<void> {
+        const { error } = await this.client.from(TABLE_PROFILE).insert({
+            id: user.id,
+            username,
+        });
+
+        if (error) {
+            throw error;
+        }
     }
 
     async loginUser(email: string, password: string): Promise<UserDto> {
@@ -36,7 +68,7 @@ export default class UserRepository implements IRepository {
     }
 
     async isUserLoggedIn(): Promise<boolean> {
-        return (await this.client.auth.getSession()) !== null;
+        return (await this.client.auth.getUser()).data.user !== null;
     }
 
     async getCurrentUserId(): Promise<string> {
@@ -54,10 +86,10 @@ export default class UserRepository implements IRepository {
 
     async getUser(id: string): Promise<UserDto> {
         const { data, error } = await this.client
-            .from('profile')
+            .from(TABLE_PROFILE)
             .select('*')
             .eq('id', id)
-            .returns<Tables<'profile'>[]>();
+            .returns<Tables<typeof TABLE_PROFILE>[]>();
 
         if (error) {
             throw error;
@@ -77,7 +109,7 @@ export default class UserRepository implements IRepository {
     }
 }
 
-export function userToDto(profile: Tables<'profile'>): UserDto {
+export function userToDto(profile: Tables<typeof TABLE_PROFILE>): UserDto {
     const createdAt = new Date(Date.parse(profile.created_at));
 
     return {

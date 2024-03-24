@@ -1,24 +1,7 @@
 {
     "folders": [
         {
-            "name": "project-root",
-            "path": "./"
-        },
-        {
-            "name": "frontend",
-            "path": "src/app"
-        },
-        {
-            "name": "supabase-functions",
-            "path": "src/supabase/functions"
+            "path": "."
         }
-    ],
-    "settings": {
-        "files.exclude": {
-            "node_modules/": true,
-            "src/app/": true,
-            "src/supabase/functions/": true
-        },
-        "deno.importMap": "./src/supabase/functions/import_map.json"
-    }
+    ]
 }

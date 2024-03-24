@@ -22,7 +22,6 @@ export default async function EventsPage() {
 
     return (
         <main>
-            <h1>Events</h1>
             <div>{message !== null ? <span>{message}</span> : false}</div>
             <div>
                 <ul>

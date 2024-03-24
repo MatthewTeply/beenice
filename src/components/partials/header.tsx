@@ -1,50 +1,84 @@
-import Link from 'next/link';
+'use client';
+
+import NextLink from 'next/link';
+import {
+    NavigationMenu,
+    NavigationMenuItem,
+    NavigationMenuLink,
+    NavigationMenuList,
+    navigationMenuTriggerStyle,
+} from '../ui/navigation-menu';
 import UserRepository from '../../lib/repositories/UserRepository';
-import serverDbHandler from '../../lib/db/handlers/SupabaseServerHandler';
-import UserDto from '../../lib/dto/UserDto';
-import LogoutBtn from '../user/logoutBtn';
+import clientDbHandler from '../../lib/db/handlers/SupabaseClientHandler';
+import { usePathname, useRouter } from 'next/navigation';
+import Image from 'next/image';
 
-export default async function Header() {
-    let user: UserDto | null = null;
+import Logo from '../../../public/images/logo.png';
+import { ReactNode } from 'react';
 
-    const userRepository = new UserRepository(serverDbHandler);
+export default function Header() {
+    const router = useRouter();
+    const pathName = usePathname();
 
-    try {
-        user = await userRepository.getCurrentUser();
-    } catch (error) {}
+    const logout = async () => {
+        const userRepository = new UserRepository(clientDbHandler);
 
-    const loggedInNav = (user: UserDto) => {
-        return (
-            <>
-                <li>
-                    <Link href='/events'>My events</Link>
-                </li>
-                <li>
-                    <Link href='/bees'>My Bees</Link>
-                </li>
-                <li>
-                    <LogoutBtn user={user} />
-                </li>
-            </>
-        );
+        await userRepository.logoutUser();
+
+        router.refresh();
     };
 
-    const loggedOutNav = () => {
+    const HeaderLink = ({
+        href,
+        children,
+    }: {
+        href: string;
+        children: ReactNode;
+    }) => {
+        const isActive = href === pathName;
+
         return (
-            <li>
-                <Link href='/login'>Login</Link>
-            </li>
+            <NextLink href={href} legacyBehavior passHref>
+                <NavigationMenuLink
+                    className={navigationMenuTriggerStyle()}
+                    active={isActive}
+                >
+                    {children}
+                </NavigationMenuLink>
+            </NextLink>
         );
     };
 
     return (
-        <header>
-            <Link href='/'>
-                <h1>Beenice</h1>
-            </Link>
-            <nav>
-                <ul>{user !== null ? loggedInNav(user) : loggedOutNav()}</ul>
-            </nav>
+        <header className='w-full py-4 bg-white shadow-sm'>
+            <NavigationMenu>
+                <NavigationMenuList>
+                    <NavigationMenuItem>
+                        <HeaderLink href='/'>
+                            <Image src={Logo} alt='Beenice logo' height={40} />
+                        </HeaderLink>
+                    </NavigationMenuItem>
+                    <NavigationMenuItem>
+                        <HeaderLink href='/'>Homepage</HeaderLink>
+                    </NavigationMenuItem>
+                    <NavigationMenuItem>
+                        <HeaderLink href='/events'>My Events</HeaderLink>
+                    </NavigationMenuItem>
+                    <NavigationMenuItem>
+                        <HeaderLink href='/bees'>My Bees</HeaderLink>
+                    </NavigationMenuItem>
+                    <NavigationMenuItem>
+                        <NavigationMenuLink
+                            className={
+                                navigationMenuTriggerStyle() + ' cursor-pointer'
+                            }
+                            onClick={logout}
+                        >
+                            Log Out
+                        </NavigationMenuLink>
+                    </NavigationMenuItem>
+                </NavigationMenuList>
+            </NavigationMenu>
         </header>
     );
 }

@@ -11,20 +11,11 @@ export default async function HomePage() {
 
     try {
         initialRandomEvent = await eventRepository.getRandomEvent();
-    } catch (error) {
-        if (error instanceof RepositoryNoResultsError) {
-            message = error.message;
-        }
-    }
+    } catch (error) {}
 
     return (
         <main>
-            <h1>Homepage</h1>
-            {initialRandomEvent ? (
-                <EventsFeed initialRandomEvent={initialRandomEvent} />
-            ) : (
-                message
-            )}
+            <EventsFeed initialRandomEvent={initialRandomEvent} />
         </main>
     );
 }

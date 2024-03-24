@@ -22,7 +22,6 @@ export default async function BeesPage() {
 
     return (
         <main>
-            <h1>Bees</h1>
             <div>{message !== null ? <span>{message}</span> : false}</div>
             <div>
                 <ul>
