@@ -1,4 +1,4 @@
-import EventTypeEnum from '../enums/EventTypeEnum';
+import EventTypeDto from './EventTypeDto';
 import UserDto from './UserDto';
 
 type EventDto = {
@@ -6,7 +6,7 @@ type EventDto = {
     createdAt: Date;
     description: string;
     isRelevant: boolean;
-    type: EventTypeEnum;
+    type: EventTypeDto;
     user: UserDto;
 };
 

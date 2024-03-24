@@ -6,41 +6,47 @@ import EventRepository from '../../lib/repositories/EventRepository';
 import clientDbHandler from '../../lib/db/handlers/SupabaseClientHandler';
 import BeeRepository from '../../lib/repositories/BeeRepository';
 import RepositoryNoResultsError from '../../lib/repositories/RepositoryNoResultsError';
+import SplitView from '../splitView';
+import RandomEventForm from './RandomEventForm';
+import RandomEventDescription from './RandomEventDescription';
+import Loading from '../loading';
+
+const MSG_NO_MORE_EVENTS = 'No more events!';
 
 type Props = {
     initialRandomEvent: EventDto | null;
 };
 
-const MSG_NO_MORE_EVENTS = 'No more events!';
-
-export default function EventsFeed(props: Props) {
+export default function RandomEvent(props: Props) {
     const [beeDescription, setBeeDescription] = useState<string>('');
     const [randomEvent, setRandomEvent] = useState<EventDto | null>(
         props.initialRandomEvent
     );
     const [message, setMessage] = useState<string>('');
-
-    if (randomEvent === null) {
-        setMessage(MSG_NO_MORE_EVENTS);
-    }
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const getRandomEvent = async () => {
+        setIsLoading(true);
         const eventRepository = new EventRepository(clientDbHandler);
 
         eventRepository
             .getRandomEvent()
             .then((event) => {
                 setRandomEvent(event);
+                setIsLoading(false);
             })
             .catch((error) => {
                 if (error instanceof RepositoryNoResultsError) {
                     setRandomEvent(null);
                     setMessage(MSG_NO_MORE_EVENTS);
+                    setIsLoading(false);
                 }
             });
     };
 
-    const handleBeeDescription = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    const handleBeeDescriptionChange = (
+        e: ChangeEvent<HTMLTextAreaElement>
+    ) => {
         setBeeDescription(e.target.value);
     };
 
@@ -59,31 +65,30 @@ export default function EventsFeed(props: Props) {
                 console.error(error);
                 setMessage('Error');
             }
+        } else {
+            console.error('Empty bee message');
+            setMessage('Empty Bee Message');
         }
     };
 
-    return (
-        <section>
-            <div>{message !== '' ? <span>{message}</span> : false}</div>
-            {randomEvent !== null ? (
-                <>
-                    <div>
-                        <h3>Event</h3>
-                        <p>{randomEvent?.description}</p>
-                    </div>
-                    <div>
-                        <h3>Bee</h3>
-                        <textarea
-                            onChange={handleBeeDescription}
-                            placeholder='Bee description'
-                            value={beeDescription}
-                        ></textarea>
-                        <button onClick={createBee}>Send bee!</button>
-                    </div>
-                </>
-            ) : (
-                false
-            )}
-        </section>
-    );
+    if (randomEvent !== null && !isLoading) {
+        return (
+            <SplitView
+                leftView={<RandomEventDescription randomEvent={randomEvent} />}
+                rightView={
+                    <RandomEventForm
+                        randomEvent={randomEvent}
+                        onChange={handleBeeDescriptionChange}
+                        onSubmit={createBee}
+                    />
+                }
+            />
+        );
+    }
+
+    if (isLoading) {
+        return <Loading />;
+    }
+
+    return MSG_NO_MORE_EVENTS;
 }

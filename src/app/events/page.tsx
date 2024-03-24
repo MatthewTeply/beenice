@@ -21,7 +21,7 @@ export default async function EventsPage() {
     }
 
     return (
-        <main>
+        <main className='flex justify-center mt-20'>
             <div>{message !== null ? <span>{message}</span> : false}</div>
             <div>
                 <ul>

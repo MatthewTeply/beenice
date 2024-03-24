@@ -7,6 +7,7 @@ import SupabaseHandler from '../db/handlers/SupabaseHandler';
 import UserRepository from './UserRepository';
 import RepositoryNoResultsError from './RepositoryNoResultsError';
 import EventTypeEnum from '../enums/EventTypeEnum';
+import { getEventType } from '../services/EventTypeService';
 
 const TABLE_EVENT = 'event';
 const COLUMN_ID = 'id';
@@ -112,13 +113,15 @@ export function eventToDto(
     user: UserDto
 ): EventDto {
     const createdAt = new Date(Date.parse(event.created_at));
+    const eventTypeEnum =
+        EventTypeEnum[event.type as keyof typeof EventTypeEnum];
 
     return {
         id: event.id,
         createdAt,
         description: event.description,
         isRelevant: event.is_relevant,
-        type: EventTypeEnum[event.type as keyof typeof EventTypeEnum],
+        type: getEventType(eventTypeEnum, user),
         user,
     };
 }

@@ -1,9 +1,11 @@
 import EventTypeEnum from '../enums/EventTypeEnum';
 
-export default interface IEventType {
+type EventTypeDto = {
     type: EventTypeEnum;
     title: string;
     color: string;
     beeTitles: string[];
     beePlaceholders: string[];
-}
+};
+
+export default EventTypeDto;

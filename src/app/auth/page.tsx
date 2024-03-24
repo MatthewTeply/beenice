@@ -6,7 +6,7 @@ import LogoLarge from '../../../public/images/logo-large.png';
 export default function LoginPage() {
     return (
         <main className='flex h-screen'>
-            <section className='container flex flex-col items-center basis-1/2 bg-white py-14'>
+            <section className='container flex flex-col items-center basis-2/5 bg-white py-14'>
                 <Image
                     src={LogoLarge}
                     alt='Beenice logo'
@@ -15,7 +15,7 @@ export default function LoginPage() {
                 />
                 <AuthFormsTabs />
             </section>
-            <section className='basis-1/2'></section>
+            <section className='basis-3/5'></section>
         </main>
     );
 }

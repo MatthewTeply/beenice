@@ -1,8 +1,8 @@
 enum EventTypeEnum {
-    STRESS,
-    SADNESS,
-    ACHIEVEMENT,
-    HAPPINESS
+    STRESS = 'STRESS',
+    SADNESS = 'SADNESS',
+    ACHIEVEMENT = 'ACHIEVEMNT',
+    HAPPINESS = 'HAPPINESS',
 }
 
 export default EventTypeEnum;
