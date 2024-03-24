@@ -16,7 +16,7 @@ type Props = {
 export default function MyEvents(props: Props) {
     const [events, setEvents] = useState<EventDto[] | null>(props.events);
 
-    const [description, setDescription] = useState<string | null>(null);
+    const [description, setDescription] = useState<string>('');
     const [type, setType] = useState<EventTypeEnum | null>(null);
 
     const handleOnChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
@@ -30,12 +30,13 @@ export default function MyEvents(props: Props) {
     const handleSubmit = async () => {
         const eventRepository = new EventRepository(clientDbHandler);
 
-        if (description !== null && type !== null) {
-            console.log('TEST');
+        if (description !== '' && type !== null) {
             try {
                 await eventRepository.setEvent(description, type);
 
                 setEvents(await eventRepository.getEventsForCurrentUser());
+                setDescription('');
+                setType(null);
             } catch (error) {
                 console.log(error);
             }
@@ -49,6 +50,8 @@ export default function MyEvents(props: Props) {
                     onChange={handleOnChange}
                     onSelect={handleOnSelect}
                     onSubmit={handleSubmit}
+                    description={description}
+                    type={type}
                 />
             }
             rightView={

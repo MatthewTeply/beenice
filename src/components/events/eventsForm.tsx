@@ -15,6 +15,8 @@ type Props = {
     onChange: any;
     onSelect: any;
     onSubmit: any;
+    description: string;
+    type: EventTypeEnum | null;
 };
 
 export default function EventsForm(props: Props) {
@@ -31,9 +33,10 @@ export default function EventsForm(props: Props) {
             <Textarea
                 onChange={props.onChange}
                 placeholder='Lately I have been struggling with...'
+                value={props.description}
             ></Textarea>
 
-            <Select onValueChange={props.onSelect}>
+            <Select onValueChange={props.onSelect} value={props.type ?? ''}>
                 <SelectTrigger>
                     <SelectValue placeholder='What does it feel like?' />
                 </SelectTrigger>
